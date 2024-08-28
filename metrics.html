@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR ADMIN :: SUSTENTABILIDAD GBF   2024</title>
+    <style>
+        body{
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #title{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6vh;
+        }
+        .btnsContainer{
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .btns{
+            width: 50%;
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #show1{
+            background-color: aqua;
+        }
+
+        #show2{
+            background-color: rgb(229, 43, 30);
+        }
+
+        #show3{
+            background-color: rgb(89, 0, 233);
+        }
+
+        #show4{
+            background-color: rgb(255, 183, 0);
+        }
+
+        #cerrar{
+            position: absolute;
+            bottom: 5vh;
+            left: 46vw;
+            width: 8vh;
+            aspect-ratio: 1/1;
+            background-color: aquamarine;
+        }
+
+        #refresh{
+            position: absolute;
+            bottom: 3vh;
+            width: 40vw;
+            aspect-ratio: 16 / 6;
+            background-color: blueviolet;
+            left: 30vw;
+            text-align: center;
+            align-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">
+        <h2>QR ADMIN</h2>
+        <h3>SUSTENTABILIDAD GBF 2024</h3>
+    </div>
+    <div class="btnsContainer">
+        <div class="btns" id="show1">
+            <p>QR 1</p>
+            <p>scanned:</p>
+            <div id="counter1"></div>
+        </div>
+        <div class="btns" id="show2">
+            <p>QR 2</p>
+            <p>scanned:</p>
+            <div id="counter2"></div>
+        </div>
+        <div class="btns" id="show3">
+            <p>QR 3</p>
+            <p>scanned:</p>
+            <div id="counter3"></div>
+        </div>
+        <div class="btns" id="show4">
+            <p>QR 4</p>
+            <p>scanned:</p>
+            <div id="counter4"></div>
+        </div>
+    </div>
+
+<!--     <div id="refresh">
+
+        Actualizar
+
+    </div> -->
+
+    <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
+    <script>
+
+    const pb = new PocketBase('https://pocketbase.codesign.mx');
+
+    const collectionName = 'qr_click_counters'
+    // Función para obtener y mostrar los contadores
+async function fetchAndDisplayCounters() {
+    try {
+        const records = await pb.collection(collectionName).getFullList();
+
+        // Resetear contadores a cero antes de actualizar
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`counter${i}`).textContent = '0';
+        }
+
+        // Actualizar contadores con los valores obtenidos
+        records.forEach(record => {
+            const qrId = record.qrId; // 'qr1', 'qr2', etc.
+            const clicks = record.clicks;
+            const counterElement = document.getElementById(`counter${qrId.slice(-1)}`);
+            if (counterElement) {
+                counterElement.textContent = clicks;
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching counters:', error);
+    }
+}
+
+    // Obtener y mostrar los contadores al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAndDisplayCounters();
+        /*document.querySelector('#refresh').addEventListener('click',()=>{
+            window.location.reload();
+        })*/
+        setInterval(() => {
+            fetchAndDisplayCounters();
+        }, 5000);
+    });
+    </script>
+</body>
+</html>

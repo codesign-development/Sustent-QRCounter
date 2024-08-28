@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR ADMIN :: SUSTENTABILIDAD GBF   2024</title>
+    <style>
+        body{
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #title{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6vh;
+        }
+        .btnsContainer{
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .btns{
+            width: 50%;
+            aspect-ratio: 1/1;
+            background-color: aqua;
+        }
+
+        #QRsContainer{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            top: 0;
+            left: 0;
+            translate: all 2s;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .qrs{
+            width: 90vw;
+            aspect-ratio: 1/1;
+            background-color: yellow;
+            position: absolute;
+        }
+
+        #qr1, #show1{
+            background-color: aqua;
+        }
+
+        #qr2, #show2{
+            background-color: rgb(229, 43, 30);
+        }
+
+        #qr3, #show3{
+            background-color: rgb(89, 0, 233);
+        }
+
+        #qr4, #show4{
+            background-color: rgb(255, 183, 0);
+        }
+
+        #cerrar{
+            position: absolute;
+            bottom: 5vh;
+            left: 46vw;
+            width: 8vh;
+            aspect-ratio: 1/1;
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">
+        <h2>QR ADMIN</h2>
+        <h3>SUSTENTABILIDAD GBF 2024</h3>
+    </div>
+    <div class="btnsContainer">
+        <div class="btns" id="show1"></div>
+        <div class="btns" id="show2"></div>
+        <div class="btns" id="show3"></div>
+        <div class="btns" id="show4"></div>
+    </div>
+
+    <div id="QRsContainer">
+        <div class="qrs" id="qr1"></div>
+        <div class="qrs" id="qr2"></div>
+        <div class="qrs" id="qr3"></div>
+        <div class="qrs" id="qr4"></div>
+        <div id="cerrar"></div>
+    </div>
+
+    <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
+    <script>
+
+    const pb = new PocketBase('https://pocketbase.codesign.mx');
+
+
+
+    document.getElementById('show1').addEventListener('click', function() {
+        console.log('Botón 1 clicado');
+        // Aquí puedes agregar la funcionalidad que deseas para el botón 1
+        showQR('qr1')
+    });
+
+    document.getElementById('show2').addEventListener('click', function() {
+        console.log('Botón 2 clicado');
+        // Aquí puedes agregar la funcionalidad que deseas para el botón 2
+        showQR('qr2')
+    });
+
+    document.getElementById('show3').addEventListener('click', function() {
+        console.log('Botón 3 clicado');
+        // Aquí puedes agregar la funcionalidad que deseas para el botón 3
+        showQR('qr3')
+    });
+
+    document.getElementById('show4').addEventListener('click', function() {
+        console.log('Botón 4 clicado');
+        // Aquí puedes agregar la funcionalidad que deseas para el botón 4
+        showQR('qr4')
+    });
+
+    document.getElementById('show4').addEventListener('click', function() {
+        console.log('Botón 4 clicado');
+        // Aquí puedes agregar la funcionalidad que deseas para el botón 4
+    });
+
+    document.getElementById('cerrar').addEventListener('click', function() {
+        console.log('Cerrar');
+        // Aquí puedes agregar la funcionalidad que deseas para el botón cerrar
+        closePopUp();
+    });
+
+    const collectionName = 'qr_click_counters'
+    function incrementClickCount(qrId) {
+    // Obtener el registro de PocketBase
+        pb.collection(collectionName).getFirstListItem(`qrId="${qrId}"`)
+            .then(record => {
+                // Incrementar el contador
+                let updatedClicks = record.clicks + 1;
+                pb.collection(collectionName).update(record.id, {
+                    clicks: updatedClicks
+                });
+            })
+            .catch(err => {
+                // Si no existe el registro, crearlo
+                pb.collection(collectionName).create({
+                    qrId: qrId,
+                    clicks: 1
+                });
+            });
+    }
+
+    function showQR(id){
+        hideAllQRs();
+        openPop();
+        var currentQr = document.querySelector('#'+id);
+        currentQr.style.display='block'
+        incrementClickCount(id)
+    }
+
+    function hideAllQRs(){
+        document.querySelectorAll('.qrs').forEach(function(element) {
+            element.style.display = 'none';
+        });
+    }
+
+    function openPop(){
+        document.querySelector('#QRsContainer').style.display = 'flex';
+    }
+
+    function closePopUp(){
+        hideAllQRs();
+        document.querySelector('#QRsContainer').style.display = 'none';
+    }
+    </script>
+</body>
+</html>
